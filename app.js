@@ -3,10 +3,15 @@ var expirationTime;
 
 const queryString = require('node:querystring');
 const dotenv = require('dotenv');
+const ejs = require('ejs');
 const axios = require('axios');
 const express = require('express');
 
 const app = express();
+
+app.use(express.static('public'));
+app.set('view engine', 'ejs');
+
 dotenv.config();
 
 const authenticateSpotify = async (code) => {
@@ -37,7 +42,6 @@ const authenticateSpotify = async (code) => {
     } catch (error) {
         console.error(`Error refreshing token: ${error.message}`);
     }
-    
 }
 
 const refreshToken = async () => {
@@ -60,6 +64,7 @@ const refreshToken = async () => {
         accessToken = access_token;
         expirationTime = Date.now() + expires_in * 1000;
         console.log(`Access token refreshed: ${accessToken}`);
+        
     } catch (error) {
         console.error(`Error refreshing token: ${error.message}`);
     }
@@ -81,11 +86,10 @@ const checkTokenValidity = async (req, res, next) => {
 }
 
 app.get('/', (req, res) => {
-    res.send(
-        "<a href='https://accounts.spotify.com/authorize?client_id="
-        + process.env.CLIENT_ID
-        + "&response_type=code&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2Faccount&scope=user-top-read'>Sign in</a>"
-    );
+    res.render(__dirname + '/views/index', {
+        CLIENT_ID: process.env.CLIENT_ID,
+        REDIRECT_URI: 'http%3A%2F%2Flocalhost%3A8080%2Faccount'
+    });
 });
 
 app.get('/account', async (req, res) => {
@@ -102,28 +106,6 @@ app.get('/account', async (req, res) => {
         console.error(`Error authenticating with Spotify: ${error.message}`);
         res.status(500).send('Error authenticating with Spotify');
     }
-    // const spotifyResponse = await axios.post(
-    //     'https://accounts.spotify.com/api/token',
-    //     queryString.stringify({
-    //         grant_type: 'authorization_code',
-    //         code: req.query.code,
-    //         redirect_uri: process.env.RED_URI_DEC,
-    //     }),
-    //     {
-    //         headers: {
-    //             Authorization: "Basic " + process.env.BASE64_AUTH,
-    //             'Content-Type': "application/x-www-form-urlencoded",
-    //         },
-    //     }
-    // );
-
-    // // accessToken = spotifyResponse.data.access_token;
-    // const {access_token, expires_in} = spotifyResponse.data;
-    // accessToken = access_token;
-    // expirationTime = Date.now() + expires_in * 1000;
-    // // console.log('Access Token: ' + accessToken + '\n');
-    // // console.log('Current Time: ' + Date.now() + '\n');
-    // // console.log('Expiration Time: ' + expirationTime + '\n');
 });
 
 app.get('/top', checkTokenValidity ,async (req, res) => {
@@ -182,5 +164,3 @@ app.post('/hello', function(req, res){
 });
 
 app.listen(8080);
-
-
