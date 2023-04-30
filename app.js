@@ -151,7 +151,13 @@ app.get('/top', checkTokenValidity ,async (req, res) => {
             };
         }));
 
-        res.send(tracks);
+        // res.send(tracks);
+        // Instead of just sending a JSON
+        // We render the ejs view
+        res.render(__dirname + '/views/tops', {
+            tracks: tracks
+        });
+
     } catch (error) {
         console.error(error);
         res.status(500).send('Error retrieving top tracks');
