@@ -72,9 +72,10 @@ export const getTopTracksInfo = async (accessToken, limit, term) => {
                 key: audio.data.key,
                 energy: audio.data.energy,
                 genres: artistResponse.data.genres,
+                duration: item.duration_ms,
             };
         }));
-        return tracks;
+        return { items: tracks };
     } catch (error) {
         console.error(error);
     }

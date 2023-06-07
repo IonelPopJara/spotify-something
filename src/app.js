@@ -42,7 +42,7 @@ app.get('/home', async (req, res) => {
 
 app.get("/tops/:limit?/:term?", async (req, res) => {
     const limit = req.params.limit || 10;
-    const term = req.params.term || 'medium_term';
+    const term = req.params.term || 'short_term';
     getTopTracksInfo(access_token, limit, term).then((response) => {
         res.send(response);
     });
