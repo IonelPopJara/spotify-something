@@ -73,6 +73,8 @@ export const getTopTracksInfo = async (accessToken, limit, term) => {
                 energy: audio.data.energy,
                 genres: artistResponse.data.genres,
                 duration: item.duration_ms,
+                danceability: audio.data.danceability,
+                popularity: item.popularity,
             };
         }));
         return { items: tracks };
