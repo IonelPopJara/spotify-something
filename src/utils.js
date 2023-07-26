@@ -34,6 +34,9 @@ export const authenticateSpotify = async (code) => {
 }
 
 export const formatAccessPoint = () => {
+
+    console.log(process.env.CLIENT_ID);
+
     return 'https://accounts.spotify.com/authorize?client_id=' +
         process.env.CLIENT_ID +
         '&response_type=code&redirect_uri=http%3A%2F%2F' +
@@ -75,6 +78,8 @@ export const getTopTracksInfo = async (accessToken, limit, term) => {
                 duration: item.duration_ms,
                 danceability: audio.data.danceability,
                 popularity: item.popularity,
+                valence: audio.data.valence,
+                tempo: audio.data.tempo,
             };
         }));
         return { items: tracks };
